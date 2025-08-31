@@ -119,8 +119,11 @@ const HeaderRight = () => {
   const navigation = useNavigation();
   if (!token) {
     return (
-      <TouchableOpacity>
-        <Text>Login/Sign Up</Text>
+      <TouchableOpacity
+        style={styles.headerRightContainer}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={styles.loginSignupText}>Login/Sign Up</Text>
       </TouchableOpacity>
     );
   }
@@ -172,5 +175,10 @@ const styles = StyleSheet.create({
     height: 26,
     resizeMode: 'contain',
     tintColor: colors.primary,
+  },
+  loginSignupText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
