@@ -8,4 +8,5 @@ export default {
     Warning: require('./Warning.png'),
     Filter: require('./Filter.png'),
     FilterOff: require('./FilterOff.png'),
+    ProfileUser: require('./ProfileUser.png'),
 }
