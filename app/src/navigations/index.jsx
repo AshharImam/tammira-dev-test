@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import BlogDetailScreen from 'screens/BlogDetailScreen';
 import BlogListScreen from 'screens/BlogListScreen';
 import LoginScreen from 'screens/LoginScreen';
+import ProfileScreen from 'screens/ProfileEditScreen';
 import SignupScreen from 'screens/SignupScreen';
 import colors from 'src/styles/colors';
 import { getProfile } from 'store/authSlice';
@@ -99,6 +100,13 @@ const Navigations = () => {
               fontWeight: '600',
             },
           })}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
+          }}
         />
       </Stack.Navigator>
       <FlashMessage position="top" />

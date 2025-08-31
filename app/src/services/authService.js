@@ -15,8 +15,24 @@ class AuthService extends ApiService {
     }
 
     // Update profile
-    async updateProfile(id, userData) {
-        const response = await this.api.put(`/users/${id}`, userData);
+    async updateProfile(userData) {
+        const response = await this.api.put(`/users/profile`, userData);
+        return response.data;
+    }
+
+    // Update profile
+    async uploadImage(image) {
+        const formData = new FormData();
+        formData.append('image', {
+            uri: image,
+            type: `image/${image.split('.').pop()}`,
+            name: image.split('/').pop(),
+        });
+        const response = await this.api.post(`/upload/image`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         return response.data;
     }
 

@@ -28,9 +28,9 @@ export const signup = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
     'auth/updateProfile',
-    async ({ id, userData }, { rejectWithValue }) => {
+    async (userData, { rejectWithValue }) => {
         try {
-            const response = await authService.updateProfile(id, userData);
+            const response = await authService.updateProfile(userData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Profile update failed');
@@ -124,7 +124,7 @@ const authSlice = createSlice({
             })
             // Update Profile
             .addCase(updateProfile.fulfilled, (state, action) => {
-                state.user = action.payload.user;
+                state.user = action.payload;
             })
             // Logout
             .addCase(logout.fulfilled, (state) => {
@@ -132,7 +132,7 @@ const authSlice = createSlice({
                 state.token = null;
                 state.isAuthenticated = false;
             }).addCase(getProfile.fulfilled, (state, action) => {
-                state.user = action.payload.user;
+                state.user = action.payload;
             });
     }
 });

@@ -9,4 +9,5 @@ export default {
     Filter: require('./Filter.png'),
     FilterOff: require('./FilterOff.png'),
     ProfileUser: require('./ProfileUser.png'),
+    Camera: require('./Camera.png'),
 }
