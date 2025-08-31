@@ -6,7 +6,7 @@ const {
     getProfile,
     changePassword
 } = require('../controllers/auth.controller');
-const { auth } = require('../middleware/auth');
+const { auth } = require('../middleware/auth.middleware');
 
 // POST /api/auth/register - Register new user
 router.post('/register', register);
