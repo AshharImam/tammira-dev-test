@@ -5,16 +5,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import blogReducer from './blogSlice';
 import filterReducer from './filterSlice';
+import authReducer from './authSlice';
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['filters'] // Only persist filters
+    whitelist: ['filters', 'auth'] // Only persist filters
 };
 
 const rootReducer = combineReducers({
     blogs: blogReducer,
     filters: filterReducer,
+    auth: authReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
