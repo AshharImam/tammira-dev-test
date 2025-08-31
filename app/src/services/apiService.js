@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { store } from 'store/store';
 
 const API_BASE_URL = 'http://192.168.1.100:5000/api'; // Use 10.0.2.2 for Android emulator, localhost for iOS
 
@@ -16,6 +17,11 @@ class ApiService {
         this.api.interceptors.request.use(
             (config) => {
                 console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+                const red = store.getState();
+                const token = red.auth.token;
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
                 return config;
             },
             (error) => {

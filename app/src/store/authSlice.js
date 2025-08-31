@@ -38,6 +38,18 @@ export const updateProfile = createAsyncThunk(
     }
 );
 
+export const getProfile = createAsyncThunk(
+    'auth/getProfile',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await authService.getProfile();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Profile update failed');
+        }
+    }
+);
+
 export const logout = createAsyncThunk(
     'auth/logout',
     async (_, { rejectWithValue }) => {
@@ -119,6 +131,8 @@ const authSlice = createSlice({
                 state.user = null;
                 state.token = null;
                 state.isAuthenticated = false;
+            }).addCase(getProfile.fulfilled, (state, action) => {
+                state.user = action.payload.user;
             });
     }
 });

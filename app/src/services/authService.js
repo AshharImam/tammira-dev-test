@@ -20,6 +20,12 @@ class AuthService extends ApiService {
         return response.data;
     }
 
+    // Get profile
+    async getProfile() {
+        const response = await this.api.get(`/auth/profile`,);
+        return response.data;
+    }
+
     // Logout
     async logout() {
     }

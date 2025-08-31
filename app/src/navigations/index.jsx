@@ -1,20 +1,27 @@
 // App.js
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import BlogDetailScreen from 'screens/BlogDetailScreen';
 import BlogListScreen from 'screens/BlogListScreen';
 import LoginScreen from 'screens/LoginScreen';
 import SignupScreen from 'screens/SignupScreen';
+import { getProfile } from 'store/authSlice';
 
 const Stack = createStackNavigator();
 
 const Navigations = () => {
   const token = useSelector(state => state.auth.token);
-  console.log(token);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (token) {
+      dispatch(getProfile());
+    }
+  }, [token]);
+
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
