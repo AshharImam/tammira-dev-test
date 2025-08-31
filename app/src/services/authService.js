@@ -10,7 +10,7 @@ class AuthService extends ApiService {
 
     // Sign up user
     async signup(userData) {
-        const response = await this.api.post('/auth/signup', userData);
+        const response = await this.api.post('/auth/register', userData);
         return response.data;
     }
 
