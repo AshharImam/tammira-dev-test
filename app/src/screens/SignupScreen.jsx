@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import colors from 'src/styles/colors';
 import typography from 'src/styles/typography';
 import { signup, clearError } from 'store/authSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignupScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
