@@ -144,7 +144,7 @@ const BlogDetailScreen = ({ route, navigation }) => {
             source={{
               uri:
                 blog.author?.profile_pic_url ||
-                'https://via.placeholder.com/50x50',
+                'https://imebehavioralhealth.com/wp-content/uploads/2021/10/user-icon-placeholder-1.png',
             }}
             style={styles.authorImage}
           />
