@@ -1,45 +1,20 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import Navigations from 'navigations/index';
+import React from 'react';
+import 'react-native-gesture-handler';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { PersistGate } from 'redux-persist/integration/react';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
+import LoadingScreen from 'components/LoadingScreen';
+import { Provider } from 'react-redux';
+import { persistor, store } from 'store/store';
+const App = () => {
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={<LoadingScreen />} persistor={persistor}>
+        <Navigations />
+      </PersistGate>
+    </Provider>
   );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+};
 
 export default App;
