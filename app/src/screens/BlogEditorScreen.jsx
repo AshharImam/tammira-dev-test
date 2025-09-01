@@ -1,5 +1,5 @@
-// screens/BlogEditorScreen.js
-import React, { useState, useEffect } from 'react';
+// screens/BlogEditorScreen.js - FIXED VERSION
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,16 +14,16 @@ import {
   Modal,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { createBlog, updateBlog } from 'store/blogSlice';
+import { createBlog, updateBlog } from '../store/blogSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import colors from 'src/styles/colors';
+import typography from 'src/styles/typography';
 import {
   generateSlug,
   getWordCount,
   calculateReadingTime,
-} from 'src/utils/helpers';
-import colors from 'src/styles/colors';
-import typography from 'src/styles/typography';
-import blogService from 'src/services/blogService';
+} from '../utils/helpers';
+import { CommonActions } from '@react-navigation/native';
 
 const BlogEditorScreen = ({ route, navigation }) => {
   const { blog, isEdit = false } = route.params || {};
@@ -43,9 +43,12 @@ const BlogEditorScreen = ({ route, navigation }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
+  // Initialize form data only once when component mounts
   useEffect(() => {
-    if (isEdit && blog) {
+    if (isEdit && blog && !initialized) {
+      console.log('RERENDING', 49);
       setFormData({
         title: blog.title || '',
         sub_title: blog.sub_title || '',
@@ -53,9 +56,88 @@ const BlogEditorScreen = ({ route, navigation }) => {
         tags: blog.tags || [],
         slug: blog.slug || '',
       });
+      setInitialized(true);
+    } else if (!isEdit && !initialized) {
+      setInitialized(true);
+    }
+  }, [isEdit, blog, initialized]);
+
+  // Memoize the back press handler to prevent recreation on every render
+  const handleBackPress = useCallback(() => {
+    if (hasUnsavedChanges) {
+      setShowExitModal(true);
+    } else {
+      navigation.goBack();
+    }
+  }, [hasUnsavedChanges, navigation]);
+
+  // Memoize the save handler
+  const handleSave = useCallback(async () => {
+    const newErrors = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
     }
 
-    // Set navigation options
+    if (!formData.content.trim()) {
+      newErrors.content = 'Content is required';
+    } else if (formData.content.trim().length < 50) {
+      newErrors.content = 'Content must be at least 50 characters';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const blogData = {
+      ...formData,
+      slug: formData.slug || generateSlug(formData.title),
+      author: user._id,
+    };
+
+    try {
+      if (isEdit) {
+        await dispatch(updateBlog({ id: blog._id, blogData })).unwrap();
+        Alert.alert('Success', 'Blog updated successfully', [
+          {
+            onPress: () => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'BlogList',
+                    },
+                  ],
+                }),
+              );
+            },
+            text: 'OK',
+          },
+        ]);
+      } else {
+        await dispatch(createBlog(blogData)).unwrap();
+        Alert.alert('Success', 'Blog published successfully', [
+          {
+            onPress: () => {
+              navigation.goBack();
+            },
+            text: 'OK',
+          },
+        ]);
+      }
+      setHasUnsavedChanges(false);
+      // navigation.goBack();
+    } catch (error) {
+      Alert.alert('Error', error?.message || 'Failed to save blog');
+    }
+  }, [formData, user._id, isEdit, blog, dispatch, navigation]);
+
+  // Set navigation options only when necessary values change
+  useEffect(() => {
+    if (!initialized) return;
+
     navigation.setOptions({
       title: isEdit ? 'Edit Blog' : 'New Blog',
       headerLeft: () => (
@@ -97,16 +179,28 @@ const BlogEditorScreen = ({ route, navigation }) => {
         </View>
       ),
     });
-  }, [isEdit, blog, navigation, formData, loading, showPreview]);
+  }, [
+    initialized,
+    isEdit,
+    showPreview,
+    formData.title,
+    formData.content,
+    loading,
+    handleBackPress,
+    handleSave,
+  ]);
 
-  // Track changes
+  // Track changes - separated into its own effect with proper dependencies
   useEffect(() => {
+    if (!initialized) return;
+
     if (isEdit && blog) {
       const hasChanges =
         formData.title !== (blog.title || '') ||
         formData.sub_title !== (blog.sub_title || '') ||
         formData.content !== (blog.content || '') ||
-        JSON.stringify(formData.tags) !== JSON.stringify(blog.tags || []);
+        JSON.stringify([...formData.tags].sort()) !==
+          JSON.stringify(([...blog.tags] || []).sort());
       setHasUnsavedChanges(hasChanges);
     } else {
       const hasContent =
@@ -116,67 +210,40 @@ const BlogEditorScreen = ({ route, navigation }) => {
         formData.tags.length > 0;
       setHasUnsavedChanges(hasContent);
     }
-  }, [formData, isEdit, blog]);
+  }, [
+    initialized,
+    isEdit,
+    blog,
+    formData,
+    blog?.title,
+    blog?.sub_title,
+    blog?.content,
+    blog?.tags,
+  ]);
 
-  const validateForm = () => {
-    const newErrors = {};
+  const handleInputChange = useCallback(
+    (field, value) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
 
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-
-    if (!formData.content.trim()) {
-      newErrors.content = 'Content is required';
-    } else if (formData.content.trim().length < 50) {
-      newErrors.content = 'Content must be at least 50 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = async () => {
-    if (!validateForm()) return;
-
-    const blogData = {
-      ...formData,
-      slug: formData.slug || generateSlug(formData.title),
-      author: user._id,
-    };
-
-    try {
-      if (isEdit) {
-        await dispatch(updateBlog({ id: blog._id, blogData })).unwrap();
-        Alert.alert('Success', 'Blog updated successfully');
-        navigation.goBack();
-      } else {
-        await blogService.createBlog(blogData);
-        navigation.goBack();
-
-        Alert.alert('Success', 'Blog published successfully');
+      // Auto-generate slug from title
+      if (field === 'title' && !isEdit) {
+        setFormData(prev => ({ ...prev, slug: generateSlug(value) }));
       }
-      setHasUnsavedChanges(false);
-      navigation.goBack();
-    } catch (error) {
-      Alert.alert('Error', error || 'Failed to save blog');
-    }
-  };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+      // Clear error when user starts typing
+      setErrors(prev => {
+        if (prev[field]) {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        }
+        return prev;
+      });
+    },
+    [isEdit],
+  );
 
-    // Auto-generate slug from title
-    if (field === 'title' && !isEdit) {
-      setFormData(prev => ({ ...prev, slug: generateSlug(value) }));
-    }
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: null }));
-    }
-  };
-
-  const handleAddTag = () => {
+  const handleAddTag = useCallback(() => {
     const tag = currentTag.trim().toLowerCase();
     if (tag && !formData.tags.includes(tag)) {
       setFormData(prev => ({
@@ -185,35 +252,43 @@ const BlogEditorScreen = ({ route, navigation }) => {
       }));
       setCurrentTag('');
     }
-  };
+  }, [currentTag, formData.tags]);
 
-  const handleRemoveTag = tagToRemove => {
+  const handleRemoveTag = useCallback(tagToRemove => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove),
     }));
-  };
+  }, []);
 
-  const handleBackPress = () => {
-    if (hasUnsavedChanges) {
-      setShowExitModal(true);
-    } else {
-      navigation.goBack();
-    }
-  };
-
-  const confirmExit = () => {
+  const confirmExit = useCallback(() => {
     setShowExitModal(false);
     navigation.goBack();
-  };
+  }, [navigation]);
 
-  const getStats = () => {
+  const getStats = useCallback(() => {
     const wordCount = getWordCount(formData.content);
     const readingTime = calculateReadingTime(formData.content);
     return { wordCount, readingTime };
-  };
+  }, [formData.content]);
+
+  // Don't render until initialized
+  if (!initialized) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   if (showPreview) {
+    const stats = getStats();
+
     return (
       <ScrollView style={styles.container}>
         <View style={styles.previewContainer}>
@@ -263,13 +338,15 @@ const BlogEditorScreen = ({ route, navigation }) => {
 
           <View style={styles.previewStats}>
             <Text style={styles.previewStatsText}>
-              {getStats().wordCount} words • {getStats().readingTime} min read
+              {stats.wordCount} words • {stats.readingTime} min read
             </Text>
           </View>
         </View>
       </ScrollView>
     );
   }
+
+  const stats = getStats();
 
   return (
     <KeyboardAvoidingView
@@ -388,13 +465,11 @@ const BlogEditorScreen = ({ route, navigation }) => {
           <View style={styles.statsContainer}>
             <View style={styles.stat}>
               <Icon name="text-fields" size={16} color={colors.textSecondary} />
-              <Text style={styles.statText}>{getStats().wordCount} words</Text>
+              <Text style={styles.statText}>{stats.wordCount} words</Text>
             </View>
             <View style={styles.stat}>
               <Icon name="schedule" size={16} color={colors.textSecondary} />
-              <Text style={styles.statText}>
-                {getStats().readingTime} min read
-              </Text>
+              <Text style={styles.statText}>{stats.readingTime} min read</Text>
             </View>
           </View>
         )}
@@ -436,6 +511,7 @@ const BlogEditorScreen = ({ route, navigation }) => {
   );
 };
 
+// ... styles remain the same ...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -592,7 +668,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginLeft: 4,
   },
-
   // Preview Styles
   previewContainer: {
     flex: 1,
@@ -690,7 +765,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
   },
-
   // Modal Styles
   modalOverlay: {
     flex: 1,

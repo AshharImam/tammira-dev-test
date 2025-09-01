@@ -20,6 +20,7 @@ const BlogDetailScreen = ({ route, navigation }) => {
   const { blogId, blog: routeBlog } = route.params;
   const dispatch = useDispatch();
   const { currentBlog, loading, error } = useSelector(state => state.blogs);
+  const { user } = useSelector(state => state.auth);
 
   const [textSize, setTextSize] = useState('medium');
 
@@ -30,6 +31,11 @@ const BlogDetailScreen = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerActions}>
+          {user?._id === blog?.author?._id && (
+            <TouchableOpacity style={styles.headerButton} onPress={handleEdit}>
+              <Icon name="edit" size={24} color="#1976d2" />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.headerButton} onPress={handleShare}>
             <Icon name="share" size={24} color="#1976d2" />
           </TouchableOpacity>
@@ -51,7 +57,7 @@ const BlogDetailScreen = ({ route, navigation }) => {
     return () => {
       dispatch(clearCurrentBlog());
     };
-  }, [blogId, routeBlog, navigation]);
+  }, [blogId, routeBlog, user, navigation]);
 
   const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -76,6 +82,11 @@ const BlogDetailScreen = ({ route, navigation }) => {
     } catch (error) {
       Alert.alert('Error', 'Failed to share blog');
     }
+  };
+
+  const handleEdit = async () => {
+    if (!blog && user._id !== blog.author._id) return;
+    navigation.navigate('BlogEditorScreen', { blog, isEdit: true });
   };
 
   const toggleTextSize = () => {

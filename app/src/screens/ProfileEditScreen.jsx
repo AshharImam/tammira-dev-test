@@ -304,10 +304,6 @@ const ProfileScreen = ({ navigation }) => {
               {new Date(user.createdAt || Date.now()).toLocaleDateString()}
             </Text>
           </View>
-          <View style={styles.statRow}>
-            <Icon name="article" size={20} color={colors.textSecondary} />
-            <Text style={styles.statText}>0 blog posts published</Text>
-          </View>
         </View>
 
         {/* Logout Button */}

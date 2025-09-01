@@ -102,7 +102,7 @@ const blogSlice = createSlice({
             })
             // Update blog
             .addCase(updateBlog.fulfilled, (state, action) => {
-                const updatedBlog = action.payload.data;
+                const updatedBlog = action.payload;
                 const index = state.blogs.findIndex(blog => blog._id === updatedBlog._id);
                 if (index !== -1) {
                     state.blogs[index] = updatedBlog;
