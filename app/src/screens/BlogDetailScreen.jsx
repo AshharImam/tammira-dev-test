@@ -1,5 +1,4 @@
 // screens/BlogDetailScreen.js
-import assets from 'assets/index';
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -15,6 +14,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchBlogById, clearCurrentBlog } from 'store/blogSlice';
 import { setSelectedTags } from 'store/filterSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const BlogDetailScreen = ({ route, navigation }) => {
   const { blogId, blog: routeBlog } = route.params;
@@ -31,23 +31,13 @@ const BlogDetailScreen = ({ route, navigation }) => {
       headerRight: () => (
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.headerButton} onPress={handleShare}>
-            <Image
-              source={assets.Share}
-              height={24}
-              width={24}
-              tintColor="#1976d2"
-            />
+            <Icon name="share" size={24} color="#1976d2" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerButton}
             onPress={toggleTextSize}
           >
-            <Image
-              source={assets.FormatSize}
-              height={24}
-              width={24}
-              tintColor="#1976d2"
-            />
+            <Icon name="format-size" size={24} color="#1976d2" />
           </TouchableOpacity>
         </View>
       ),

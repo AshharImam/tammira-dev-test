@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import colors from 'src/styles/colors';
 import typography from 'src/styles/typography';
 import { clearError, login } from 'store/authSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -89,12 +90,12 @@ const LoginScreen = ({ navigation }) => {
             <View
               style={[styles.inputWrapper, errors.email && styles.inputError]}
             >
-              {/* <Icon
+              <Icon
                 name="email"
                 size={20}
                 color={colors.textSecondary}
                 style={styles.inputIcon}
-              /> */}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your email"
@@ -120,12 +121,12 @@ const LoginScreen = ({ navigation }) => {
                 errors.password && styles.inputError,
               ]}
             >
-              {/* <Icon
+              <Icon
                 name="lock"
                 size={20}
                 color={colors.textSecondary}
                 style={styles.inputIcon}
-              /> */}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your password"
@@ -139,11 +140,11 @@ const LoginScreen = ({ navigation }) => {
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                {/* <Icon
+                <Icon
                   name={showPassword ? 'visibility' : 'visibility-off'}
                   size={20}
                   color={colors.textSecondary}
-                /> */}
+                />
               </TouchableOpacity>
             </View>
             {errors.password && (

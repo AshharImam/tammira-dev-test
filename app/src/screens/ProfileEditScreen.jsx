@@ -1,4 +1,5 @@
 // screens/ProfileScreen.js
+import { CommonActions } from '@react-navigation/native';
 import assets from 'assets/index';
 import React, { useEffect, useState } from 'react';
 import {
@@ -19,6 +20,7 @@ import authService from 'src/services/authService';
 import colors from 'src/styles/colors';
 import typography from 'src/styles/typography';
 import { clearError, logout, updateProfile } from 'store/authSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ProfileScreen = ({ navigation }) => {
   const { user, loading, error } = useSelector(state => state.auth);
@@ -109,10 +111,14 @@ const ProfileScreen = ({ navigation }) => {
   const confirmLogout = () => {
     dispatch(logout());
     setShowLogoutModal(false);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Auth' }],
-    });
+    setTimeout(() => {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        }),
+      );
+    }, 500);
   };
 
   const handleInputChange = (field, value) => {
@@ -213,7 +219,7 @@ const ProfileScreen = ({ navigation }) => {
               style={styles.editButton}
               onPress={() => setIsEditing(true)}
             >
-              {/* <Icon name="edit" size={20} color={colors.primary} /> */}
+              <Icon name="edit" size={20} color={colors.primary} />
               <Text style={styles.editButtonText}>Edit Profile</Text>
             </TouchableOpacity>
           )}
@@ -292,21 +298,21 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.statsContainer}>
           <Text style={styles.statsTitle}>Account Information</Text>
           <View style={styles.statRow}>
-            {/* <Icon name="schedule" size={20} color={colors.textSecondary} /> */}
+            <Icon name="schedule" size={20} color={colors.textSecondary} />
             <Text style={styles.statText}>
               Member since{' '}
               {new Date(user.createdAt || Date.now()).toLocaleDateString()}
             </Text>
           </View>
           <View style={styles.statRow}>
-            {/* <Icon name="article" size={20} color={colors.textSecondary} /> */}
+            <Icon name="article" size={20} color={colors.textSecondary} />
             <Text style={styles.statText}>0 blog posts published</Text>
           </View>
         </View>
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          {/* <Icon name="logout" size={20} color={colors.error} /> */}
+          <Icon name="logout" size={20} color={colors.error} />
           <Text style={styles.logoutButtonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
@@ -320,7 +326,7 @@ const ProfileScreen = ({ navigation }) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            {/* <Icon name="logout" size={48} color={colors.error} /> */}
+            <Icon name="logout" size={48} color={colors.error} />
             <Text style={styles.modalTitle}>Sign Out</Text>
             <Text style={styles.modalText}>
               Are you sure you want to sign out of your account?

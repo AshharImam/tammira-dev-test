@@ -14,6 +14,7 @@ import {
 import FlashMessage from 'react-native-flash-message';
 import { useDispatch, useSelector } from 'react-redux';
 import BlogDetailScreen from 'screens/BlogDetailScreen';
+import BlogEditorScreen from 'screens/BlogEditorScreen';
 import BlogListScreen from 'screens/BlogListScreen';
 import LoginScreen from 'screens/LoginScreen';
 import ProfileScreen from 'screens/ProfileEditScreen';
@@ -108,6 +109,13 @@ const Navigations = () => {
             title: 'Profile',
           }}
         />
+        <Stack.Screen
+          name="BlogEditorScreen"
+          component={BlogEditorScreen}
+          options={{
+            title: 'Blog Editor',
+          }}
+        />
       </Stack.Navigator>
       <FlashMessage position="top" />
     </NavigationContainer>
@@ -130,7 +138,7 @@ const HeaderRight = () => {
   return (
     <View style={styles.headerRightContainer}>
       <TouchableOpacity
-        onPress={() => navigation.navigate('AddBlog')}
+        onPress={() => navigation.navigate('BlogEditorScreen')}
         style={[styles.headerButton, styles.plusIconContainer]}
       >
         <Image source={assets.Plus} style={styles.plusIcon} />

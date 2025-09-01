@@ -8,6 +8,7 @@ import {
   Image,
 } from 'react-native';
 import assets from 'assets/index'; // Adjust the path as necessary
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SearchBar = ({
   onSearch,

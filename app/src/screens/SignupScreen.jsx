@@ -154,12 +154,12 @@ const SignupScreen = ({ navigation }) => {
             <View
               style={[styles.inputWrapper, errors.email && styles.inputError]}
             >
-              {/* <Icon
+              <Icon
                 name="email"
                 size={20}
                 color={colors.textSecondary}
                 style={styles.inputIcon}
-              /> */}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your email"
@@ -185,12 +185,12 @@ const SignupScreen = ({ navigation }) => {
                 errors.password && styles.inputError,
               ]}
             >
-              {/* <Icon
+              <Icon
                 name="lock"
                 size={20}
                 color={colors.textSecondary}
                 style={styles.inputIcon}
-              /> */}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Create password"
@@ -204,11 +204,11 @@ const SignupScreen = ({ navigation }) => {
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                {/* <Icon
+                <Icon
                   name={showPassword ? 'visibility' : 'visibility-off'}
                   size={20}
                   color={colors.textSecondary}
-                /> */}
+                />
               </TouchableOpacity>
             </View>
             {errors.password && (
@@ -224,12 +224,12 @@ const SignupScreen = ({ navigation }) => {
                 errors.confirmPassword && styles.inputError,
               ]}
             >
-              {/* <Icon
+              <Icon
                 name="lock"
                 size={20}
                 color={colors.textSecondary}
                 style={styles.inputIcon}
-              /> */}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Confirm password"
@@ -245,11 +245,11 @@ const SignupScreen = ({ navigation }) => {
                 style={styles.eyeIcon}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {/* <Icon
+                <Icon
                   name={showConfirmPassword ? 'visibility' : 'visibility-off'}
                   size={20}
                   color={colors.textSecondary}
-                /> */}
+                />
               </TouchableOpacity>
             </View>
             {errors.confirmPassword && (

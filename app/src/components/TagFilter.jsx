@@ -1,5 +1,4 @@
 // components/TagFilter.js
-import assets from 'assets/index';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -9,8 +8,8 @@ import {
   ScrollView,
   TextInput,
   Modal,
-  Image,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,16 +18,16 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
   // Get unique tags from available tags and selected tags
   const allTags = [...new Set([...availableTags, ...selectedTags])];
 
-  const toggleTag = tag => {
+  const toggleTag = (tag) => {
     const isSelected = selectedTags.includes(tag);
     let newTags;
-
+    
     if (isSelected) {
       newTags = selectedTags.filter(t => t !== tag);
     } else {
       newTags = [...selectedTags, tag];
     }
-
+    
     onTagsChange(newTags);
   };
 
@@ -59,11 +58,7 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
             onPress={() => setIsModalVisible(true)}
             style={styles.addButton}
           >
-            <Image
-              source={assets.Plus}
-              style={styles.addIcon}
-              tintColor="#1976d2"
-            />
+            <Icon name="add" size={20} color="#1976d2" />
           </TouchableOpacity>
         </View>
       </View>
@@ -85,12 +80,7 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
                 <Text style={[styles.tagText, styles.selectedTagText]}>
                   #{tag}
                 </Text>
-                <Image
-                  source={assets.Plus}
-                  width={20}
-                  height={20}
-                  tintColor="#1976d2"
-                />
+                <Icon name="close" size={16} color="#fff" style={styles.removeIcon} />
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -102,17 +92,15 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
         showsHorizontalScrollIndicator={false}
         style={styles.tagsScroll}
       >
-        {allTags
-          .filter(tag => !selectedTags.includes(tag))
-          .map((tag, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.tag}
-              onPress={() => toggleTag(tag)}
-            >
-              <Text style={styles.tagText}>#{tag}</Text>
-            </TouchableOpacity>
-          ))}
+        {allTags.filter(tag => !selectedTags.includes(tag)).map((tag, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.tag}
+            onPress={() => toggleTag(tag)}
+          >
+            <Text style={styles.tagText}>#{tag}</Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
 
       {/* Add Custom Tag Modal */}
@@ -130,15 +118,10 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
                 onPress={() => setIsModalVisible(false)}
                 style={styles.modalCloseButton}
               >
-                <Image
-                  source={assets.Cross}
-                  width={24}
-                  height={24}
-                  tintColor="#666"
-                />
+                <Icon name="close" size={24} color="#666" />
               </TouchableOpacity>
             </View>
-
+            
             <TextInput
               style={styles.customTagInput}
               placeholder="Enter tag name..."
@@ -148,7 +131,7 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
               autoFocus
               returnKeyType="done"
             />
-
+            
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
@@ -156,11 +139,11 @@ const TagFilter = ({ selectedTags, onTagsChange, availableTags = [] }) => {
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-
+              
               <TouchableOpacity
                 style={[
                   styles.addTagButton,
-                  !customTag.trim() && styles.addTagButtonDisabled,
+                  !customTag.trim() && styles.addTagButtonDisabled
                 ]}
                 onPress={addCustomTag}
                 disabled={!customTag.trim()}
@@ -206,9 +189,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     padding: 4,
-  },
-  addIcon: {
-    width: 20,
   },
   selectedTagsContainer: {
     paddingHorizontal: 16,
