@@ -177,6 +177,13 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.footerLink}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+        <Text style={styles.orText}>OR</Text>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Continue as a </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BlogList')}>
+            <Text style={styles.footerLink}>Guest</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -299,6 +306,12 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     ...typography.body2,
     color: colors.primary,
+  },
+  orText: {
+    ...typography.body2,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginVertical: 16,
   },
   footer: {
     flexDirection: 'row',
