@@ -14,7 +14,7 @@ import {
   Modal,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { createBlog, updateBlog } from '../store/blogSlice';
+import { updateBlog } from 'store/blogSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from 'src/styles/colors';
 import typography from 'src/styles/typography';
@@ -24,6 +24,7 @@ import {
   calculateReadingTime,
 } from '../utils/helpers';
 import { CommonActions } from '@react-navigation/native';
+import blogService from 'src/services/blogService';
 
 const BlogEditorScreen = ({ route, navigation }) => {
   const { blog, isEdit = false } = route.params || {};
@@ -117,7 +118,7 @@ const BlogEditorScreen = ({ route, navigation }) => {
           },
         ]);
       } else {
-        await dispatch(createBlog(blogData)).unwrap();
+        await blogService.createBlog(blogData);
         Alert.alert('Success', 'Blog published successfully', [
           {
             onPress: () => {
